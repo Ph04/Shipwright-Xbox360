@@ -2,59 +2,64 @@
 
 ## Phase 0 — Baseline and feasibility (current)
 
-- [ ] Record upstream Shipwright revision and license.
-- [ ] Inspect the current renderer abstraction and platform-specific source selection.
-- [ ] Inspect xsdk, Vulkan4Xenon, and Dusklight-Xenon documentation and sample build flow.
-- [ ] Build the smallest supported xsdk sample in a reproducible environment.
-- [ ] Record whether the test is compile-only, emulator-tested, or verified on physical hardware.
+- [ ] Record the exact upstream Shipwright commit, license notices and immutable source baseline.
+- [x] Inspect the current application CMake, renderer selection and platform-specific source branches at source level. Exact libultraship/Torch gitlink SHAs still need to be pinned.
+- [x] Review xsdk, Vulkan4Xenon, SDL-xenon and Dusklight-Xenon build/port documentation.
+- [ ] Build the smallest supported xsdk sample in a clean, reproducible environment.
+- [ ] Record compiler versions and whether each test was compile-only, emulator-tested or verified on physical hardware.
 
-**Exit criteria:** a documented toolchain setup and a reproducible minimal .xex test. Do not begin a broad source port before this passes.
+**Exit criteria:** a pinned baseline, documented toolchain setup, and a reproducible minimal .xex test. Do not begin broad source integration before this passes.
+
+Current evidence and open issues are captured in [DEPENDENCY_AUDIT.md](DEPENDENCY_AUDIT.md), [DEPENDENCY_MATRIX.md](DEPENDENCY_MATRIX.md) and [RENDERER_FEASIBILITY.md](RENDERER_FEASIBILITY.md).
 
 ## Phase 1 — Platform bring-up
 
 - [ ] Add an Xbox 360 platform profile/build preset without changing upstream defaults.
 - [ ] Implement a minimal entry point and main loop.
-- [ ] Verify controller input, timing, filesystem access, logging, and clean shutdown.
+- [ ] Verify controller input, timing, filesystem access, logging, audio output and clean shutdown.
 - [ ] Test a simple Xenos clear/present path and capture evidence.
 
-**Exit criteria:** stable test application with documented target hardware and test steps.
+**Exit criteria:** stable test application with documented target hardware and repeatable test steps.
 
 ## Phase 2 — Dependency inventory and portability seams
 
-For every direct and transitive dependency, record: required version/revision, license, API surface used, current xsdk port status, build-system changes, and unresolved blockers.
+For every direct and transitive dependency, record: exact version/revision, license, API surface used, current xsdk port status, build-system changes, target build result and unresolved blockers.
 
 Priority areas:
-- SDL/platform layer and event/input handling
-- graphics abstraction and shader pipeline
-- audio output and decoding
-- threading, synchronization, timers
-- filesystem, archives, compression, image decoding
-- networking and platform services
-- C/C++ standard library and compiler compatibility
+- SDL2/SDL3 platform layer, event and controller input
+- Fast3D renderer abstraction and shader pipeline
+- audio output and Ogg/Vorbis/Opus decoding
+- threading, synchronization, timers and TLS
+- filesystem, archives, compression and image decoding
+- optional networking and platform services
+- C/C++ runtime/compiler compatibility and static link closure
+- host-only asset extraction and OTR generation
 
-Prefer small adapters behind existing interfaces. Avoid a wholesale rewrite until the minimum required APIs are mapped.
+Prefer small adapters behind existing interfaces. Keep optional scripting, dynamic modules and networking out of the first boot milestone until the base application works.
 
 ## Phase 3 — Renderer feasibility
 
-- [ ] Identify the exact renderer implementation Shipwright selects on each platform.
-- [ ] Map required graphics operations to either a Vulkan4Xenon-backed route or a native Xenos backend.
-- [ ] Inventory shader formats, compilation tools, render targets, texture formats, synchronization, and presentation requirements.
-- [ ] Build a focused renderer proof-of-concept independent of game logic.
+- [x] Inspect current renderer-selection configuration at source level.
+- [ ] Pin the exact libultraship submodule revision and identify the exact selected Fast3D backend in that snapshot.
+- [ ] Map required graphics operations to a Vulkan4Xenon-backed route or a native Xenos backend.
+- [ ] Inventory shader formats, shader tools, render targets, texture formats, synchronization and presentation requirements.
+- [ ] Build a focused renderer proof-of-concept independent of game logic; measure CPU time and memory on the intended target.
 
 **Decision gate:** continue with a Vulkan subset only if the required API features and performance costs are demonstrated. Otherwise estimate a native backend before committing to it.
 
 ## Phase 4 — Game integration
 
+- [ ] Separate host tools and generated asset inputs from the PowerPC target build.
 - [ ] Integrate upstream code in small, reviewable steps.
 - [ ] Resolve dependency and compiler failures one at a time.
 - [ ] Keep ROM/asset extraction as a user-supplied local step; do not commit ROMs or extracted copyrighted assets.
-- [ ] Add startup diagnostics and explicit unsupported-feature messages.
+- [ ] Add startup diagnostics, memory reporting and explicit unsupported-feature messages.
 
 ## Phase 5 — Validation and packaging
 
 - [ ] Compile from a clean checkout.
 - [ ] Test on a supported emulator if available, then physical hardware.
-- [ ] Validate input, audio, graphics, save/config paths, stability, and performance.
+- [ ] Validate input, audio, graphics, save/config paths, stability and performance.
 - [ ] Publish artifacts only after the build and test level are stated accurately.
 
 ## Required status labels
@@ -65,4 +70,4 @@ Prefer small adapters behind existing interfaces. Avoid a wholesale rewrite unti
 - **Emulator tested** — named emulator and test steps recorded.
 - **Hardware verified** — test completed on physical Xbox 360 with evidence.
 
-These labels are deliberately distinct.
+These labels are deliberately distinct. A test project or .xex generated by xsdk does not prove that Shipwright builds or runs.
