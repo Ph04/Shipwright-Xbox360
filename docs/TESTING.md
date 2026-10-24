@@ -15,6 +15,12 @@ The workflow in [`.github/workflows/xsdk-smoke.yml`](../.github/workflows/xsdk-s
 
 That workflow is compile-only. It does not build Shipwright, run an emulator, or run the title on hardware. Only report it as passed after checking the actual GitHub Actions run result and logs.
 
+## Shader trace patch gate
+
+The [Fast3D shader trace patch workflow](../.github/workflows/shader-trace-patch.yml) checks the shell helper syntax and applies the opt-in patch to the exact pinned libultraship source, then runs `git diff --check`. This is a patch applicability check only; it does not compile Shipwright or the patched C++ source.
+
+The helper [compile-fast3d-shader-dumps.sh](../scripts/compile-fast3d-shader-dumps.sh) uses the pinned xsdk host compiler and glslang to test captured shaders one stage at a time. Its output is not evidence until the script is run and its TSV/logs are reviewed.
+
 ## No unsupported claims
 
 - Source added does not mean it compiles.
