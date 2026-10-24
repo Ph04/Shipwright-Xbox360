@@ -43,7 +43,6 @@ printf 'xsdk=%s\n' "$ACTUAL_SHA" > "$LOG_DIR/source-revisions.txt"
 
 # xsdk's shader helper looks for a binary named "glslang"; on Ubuntu the GLSL-only
 # Khronos executable is called glslangValidator. No HLSL shaders are built in this smoke test.
-ln -sf "$(command -v glslangValidator)" "$PREFIX-glslang-temp"
 mkdir -p "$PREFIX/bin"
 ln -sf "$(command -v glslangValidator)" "$PREFIX/bin/glslang"
 
