@@ -6,8 +6,10 @@ on:
     paths:
       - '.github/workflows/xsdk-smoke.yml'
       - 'scripts/ci-xsdk-smoke.sh'
-      - 'docs/**'
-      - 'README.md'
+      - 'probes/**'
+      - 'src/**'
+      - 'CMakeLists.txt'
+      - 'cmake/**'
 
 permissions:
   contents: read
