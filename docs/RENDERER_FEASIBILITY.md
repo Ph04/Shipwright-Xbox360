@@ -41,6 +41,8 @@ Decision still open: either develop/maintain an SDL2 compatibility port, or port
 
 ### Graphics: highest-risk subsystem
 
+The dynamic Fast3D shader path is a separate gating issue; see [SHADER_PIPELINE.md](SHADER_PIPELINE.md) for the source trace and alternatives (runtime GLSL frontend, offline permutation bundle, or shader-system redesign). The GPU backend cannot be selected until both rendering operations and the shader pipeline have a feasible implementation.
+
 The pinned libultraship revision (`da6daf1a50a5e46d6641408d52227e31e85e46df`) contains these files in `src/fast/backends`: `gfx_direct3d11.cpp`, `gfx_direct3d_common.cpp`, `gfx_dxgi.cpp`, `gfx_metal.cpp`, `gfx_metal_shader.cpp`, `gfx_opengl.cpp`, and `gfx_sdl2.cpp`. That directory has no Vulkan backend. Its generic non-Windows CMake path defines `ENABLE_OPENGL`, while the application does not add an Xbox 360 renderer branch. xsdk's toolchain uses `CMAKE_SYSTEM_NAME=Generic`, so an unmodified configure could select the wrong path unless the Xbox profile explicitly overrides the renderer choice.
 
 The existing [`GfxRenderingAPI`](https://github.com/kenix3/libultraship/blob/da6daf1a50a5e46d6641408d52227e31e85e46df/include/fast/backends/gfx_rendering_api.h) interface provides useful seams for shaders, textures, sampling, depth state, viewport/scissor, triangle draws, framebuffer creation/copy/clear/readback and MSAA resolve. However, the OpenGL implementation currently translates Fast3D state and shader combiners into GL calls. The abstraction is a starting point—not an automatic mapping to Vulkan or Xenos.
