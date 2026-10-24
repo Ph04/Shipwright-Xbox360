@@ -48,7 +48,7 @@ ln -sf "$(command -v glslangValidator)" "$PREFIX/bin/glslang"
 
 (
   cd "$XSDK_SRC"
-  PREFIX="$PREFIX" WORK="$TOOLCHAIN_WORK" JOBS="$JOBS" tools/toolchain/build.sh
+  PREFIX="$PREFIX" WORK="$TOOLCHAIN_WORK" JOBS="$JOBS" bash tools/toolchain/build.sh
 ) 2>&1 | tee "$LOG_DIR/toolchain-build.log"
 
 "$PREFIX/bin/powerpc-xsdk-elf-gcc" --version | tee "$LOG_DIR/compiler-version.txt"
