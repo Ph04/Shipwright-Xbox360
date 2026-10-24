@@ -41,7 +41,11 @@ Decision still open: either develop/maintain an SDL2 compatibility port, or port
 
 ### Graphics: highest-risk subsystem
 
-The existing application CMake enables OpenGL on its generic GCC/Clang branch. xsdk's CMake toolchain uses CMAKE_SYSTEM_NAME=Generic, and the Xbox GPU is not exposed as a normal desktop OpenGL device. Consequently, an xsdk configure could enter the wrong feature-selection path unless the Xbox build profile explicitly overrides the existing renderer selection.
+The pinned libultraship revision (`da6daf1a50a5e46d6641408d52227e31e85e46df`) contains these files in `src/fast/backends`: `gfx_direct3d11.cpp`, `gfx_direct3d_common.cpp`, `gfx_dxgi.cpp`, `gfx_metal.cpp`, `gfx_metal_shader.cpp`, `gfx_opengl.cpp`, and `gfx_sdl2.cpp`. That directory has no Vulkan backend. Its generic non-Windows CMake path defines `ENABLE_OPENGL`, while the application does not add an Xbox 360 renderer branch. xsdk's toolchain uses `CMAKE_SYSTEM_NAME=Generic`, so an unmodified configure could select the wrong path unless the Xbox profile explicitly overrides the renderer choice.
+
+The existing [`GfxRenderingAPI`](https://github.com/kenix3/libultraship/blob/da6daf1a50a5e46d6641408d52227e31e85e46df/include/fast/backends/gfx_rendering_api.h) interface provides useful seams for shaders, textures, sampling, depth state, viewport/scissor, triangle draws, framebuffer creation/copy/clear/readback and MSAA resolve. However, the OpenGL implementation currently translates Fast3D state and shader combiners into GL calls. The abstraction is a starting point—not an automatic mapping to Vulkan or Xenos.
+
+Pinned CMake also compiles ImGui's `imgui_impl_opengl3.cpp` and `imgui_impl_sdl2.cpp`; `Fast3dGui.cpp` explicitly initializes and renders through those backends. A new game renderer alone will therefore not produce a usable menu: ImGui's GPU renderer and SDL event/window integration must also be ported.
 
 Vulkan4Xenon provides a Vulkan 1.0 subset over the xsdk GPU layer and has hardware-tested samples and a separate game port. Its own documentation explicitly describes a subset, not Vulkan conformance. The subset includes useful primitives—buffers, textures, graphics pipelines, render passes, command buffers and presentation—but some formats, features and operations remain unsupported or constrained.
 
