@@ -50,4 +50,4 @@ Do not place ROMs, extracted game assets, save files or other user-specific data
 
 - This trace covers the current desktop OpenGL Fast3D implementation only; it does not prove equivalence with an Xbox shader pipeline.
 - The source patch is opt-in and is not part of upstream Shipwright.
-- No full upstream checkout patch test, Shipwright compile, shader compile or Xbox runtime test has been claimed. The unified diff syntax/context was checked against a focused fixture, but the patch still needs to be applied and compiled in the pinned upstream build before its runtime output can be trusted.
+- The [shader-trace patch workflow](https://github.com/Ph04/Shipwright-Xbox360/actions/workflows/shader-trace-patch.yml) has successfully fetched the exact pinned libultraship commit, applied the patch, and passed `git diff --check`. This verifies patch applicability and helper syntax only. No full Shipwright compile, shader compile or Xbox runtime test has been claimed; the patched source still needs a desktop build with `SOH_TRACE_SHADERS` enabled before captured output is trusted.
