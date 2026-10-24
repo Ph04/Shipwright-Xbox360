@@ -43,9 +43,10 @@ Prefer small adapters behind existing interfaces. Keep optional scripting, dynam
 - [x] Pin the exact libultraship submodule revision; identify and trace the selected Fast3D backend in that snapshot (source mapping still pending).
 - [ ] Map required graphics operations to a Vulkan4Xenon-backed route or a native Xenos backend.
 - [ ] Inventory shader formats, shader tools, render targets, texture formats, synchronization and presentation requirements.
+- [ ] Compare runtime GLSL-to-SPIR-V compilation against an offline Fast3D permutation bundle; record cache coverage, target memory and compile latency (see [SHADER_PIPELINE.md](SHADER_PIPELINE.md)).
 - [ ] Build a focused renderer proof-of-concept independent of game logic; measure CPU time and memory on the intended target.
 
-**Decision gate:** continue with a Vulkan subset only if the required API features and performance costs are demonstrated. Otherwise estimate a native backend before committing to it.
+**Decision gate:** continue with Vulkan4Xenon only if both the graphics API mapping and the shader pipeline (including every required shader key) are demonstrated with logs and measured costs. Otherwise estimate a native xsdk GPU backend or stop and revise scope before investing in game integration.
 
 ## Phase 4 — Game integration
 
