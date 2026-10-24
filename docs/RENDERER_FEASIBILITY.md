@@ -19,12 +19,13 @@ The current source-level evidence points to a new Xbox-specific backend or a siz
 - There is no Xbox 360 target branch in the inspected application CMake configuration.
 
 Sources:
-- https://github.com/HarbourMasters/Shipwright/blob/develop/CMakeLists.txt
-- https://github.com/HarbourMasters/Shipwright/blob/develop/soh/CMakeLists.txt
-- https://github.com/HarbourMasters/Shipwright/blob/develop/.gitmodules
-- https://github.com/kenix3/libultraship/tree/port-maintenance
+- https://github.com/HarbourMasters/Shipwright/blob/2827fc2a0f56a9cdc18a87adf8c1bb7e91315f41/CMakeLists.txt
+- https://github.com/HarbourMasters/Shipwright/blob/2827fc2a0f56a9cdc18a87adf8c1bb7e91315f41/soh/CMakeLists.txt
+- https://github.com/HarbourMasters/Shipwright/blob/2827fc2a0f56a9cdc18a87adf8c1bb7e91315f41/.gitmodules
+- https://github.com/kenix3/libultraship/tree/da6daf1a50a5e46d6641408d52227e31e85e46df
+- Exact baseline: [BASELINE.md](BASELINE.md)
 
-**Important reproducibility note:** Git submodules are checked out at a specific gitlink commit, not automatically at the branch named in .gitmodules. Before editing libultraship source, resolve and record the exact gitlink SHA from the chosen Shipwright commit. A moving branch tip is not a substitute for that pin.
+**Reproducibility note:** the exact submodule gitlinks are now recorded in [BASELINE.md](BASELINE.md). Keep using those SHAs unless a deliberate upstream update is reviewed and recorded.
 
 ### SDL/platform layer
 
@@ -34,7 +35,7 @@ Sources:
 - The ImGui integration and all SDL call sites must be included in any SDL2-to-SDL3 decision; changing only find_package is not sufficient.
 
 Source:
-- https://github.com/xenosworks/SDL-xenon/blob/xenon/docs/README-xsdk.md
+- https://github.com/xenosworks/SDL-xenon/blob/adb87a744ae056f1849718770cf198fa6c4899f9/docs/README-xsdk.md
 
 Decision still open: either develop/maintain an SDL2 compatibility port, or port the application integration to SDL3 behind a dedicated Xbox platform layer. Do not select either path until the exact submodule revision and all required SDL APIs are inventoried.
 
@@ -45,10 +46,10 @@ The existing application CMake enables OpenGL on its generic GCC/Clang branch. x
 Vulkan4Xenon provides a Vulkan 1.0 subset over the xsdk GPU layer and has hardware-tested samples and a separate game port. Its own documentation explicitly describes a subset, not Vulkan conformance. The subset includes useful primitives—buffers, textures, graphics pipelines, render passes, command buffers and presentation—but some formats, features and operations remain unsupported or constrained.
 
 Sources:
-- https://github.com/xenosworks/xsdk/blob/main/cmake/xsdk.cmake
-- https://github.com/xenosworks/vulkan4xenon
-- https://github.com/xenosworks/vulkan4xenon/blob/main/docs/ROADMAP.md
-- https://github.com/xenosworks/dusklight-xenon/blob/xenon/docs/README-xsdk.md
+- https://github.com/xenosworks/xsdk/blob/2c4599b31066efcf67be099673287fbec786ef14/cmake/xsdk.cmake
+- https://github.com/xenosworks/vulkan4xenon/tree/b79913b407504b1e1663e74b14579cd91d2e7040
+- https://github.com/xenosworks/vulkan4xenon/blob/b79913b407504b1e1663e74b14579cd91d2e7040/docs/ROADMAP.md
+- https://github.com/xenosworks/dusklight-xenon/blob/d04e793671ca50bf3dad5dc3f5a16a45974558e3/docs/README-xsdk.md
 
 The graphics proof-of-concept must answer these questions with a runnable .xex, not assumptions:
 
@@ -81,8 +82,8 @@ The current root CMake creates host-oriented asset tools (Torch and the OTR pack
 Do not put ROMs, extracted copyrighted assets, or user-specific generated files into this repository. The current upstream docs state that the required ROM/asset preparation is a separate step.
 
 Source:
-- https://github.com/HarbourMasters/Shipwright/blob/develop/CMakeLists.txt
-- https://github.com/HarbourMasters/Shipwright/blob/develop/docs/BUILDING.md
+- https://github.com/HarbourMasters/Shipwright/blob/2827fc2a0f56a9cdc18a87adf8c1bb7e91315f41/CMakeLists.txt
+- https://github.com/HarbourMasters/Shipwright/blob/2827fc2a0f56a9cdc18a87adf8c1bb7e91315f41/docs/BUILDING.md
 
 ## Minimum gates, in order
 
