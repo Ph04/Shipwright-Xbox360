@@ -1,0 +1,13 @@
+# Local desktop Fast3D shader trace output (do not commit generated shader data).
+soh-shader-*.vert.glsl
+soh-shader-*.frag.glsl
+soh-shader-*.vert.h
+soh-shader-*.frag.h
+soh-shader-*.vert.log
+soh-shader-*.frag.log
+fast3d-shader-compile.tsv
+
+# Local XSDK outputs and build trees.
+build/
+xsdk-gcc/
+xsdk-gcc-work/
