@@ -48,6 +48,8 @@ Sources:
 - https://github.com/xenosworks/vulkan4xenon/blob/b79913b407504b1e1663e74b14579cd91d2e7040/docs/ROADMAP.md
 - https://github.com/xenosworks/dusklight-xenon/blob/d04e793671ca50bf3dad5dc3f5a16a45974558e3/docs/README-xsdk.md
 
+The pinned libultraship `src/fast/backends` directory contains Direct3D 11, DXGI, Metal, OpenGL and SDL2 backend source files, but no Vulkan implementation. `include/fast/backends/gfx_rendering_api.h` exposes operations for shader lifecycle, texture upload/sampling, depth state, viewport/scissor, triangle draws, framebuffer lifecycle/copy/clear/readback and MSAA resolve. Its OpenGL implementation maps Fast3D behavior to GL-specific calls. This confirms that an Xbox backend must implement the contract or introduce an explicit adapter; toggling compile definitions is not sufficient. See [RENDERER_FEASIBILITY.md](RENDERER_FEASIBILITY.md) for the operation-by-operation proof plan.
+
 A renderer proof-of-concept must validate Fast3D operations, depth/stencil, blending, texture formats and mipmaps, render targets/resolves, shader compilation, presentation, frame cost and memory use on the intended target. A custom backend or substantial adaptation is expected; changing compile definitions is not enough.
 
 ### xsdk and target environment
