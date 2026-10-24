@@ -65,6 +65,7 @@ Sources:
 
 - [Dependency portability matrix](DEPENDENCY_MATRIX.md) — initial per-subsystem findings, work required and priority.
 - [Renderer feasibility](RENDERER_FEASIBILITY.md) — graphics, SDL, audio, asset pipeline and minimum test gates.
+- [Fast3D shader pipeline](SHADER_PIPELINE.md) — dynamic GLSL generation, XSDK SPIR-V conversion and implementation choices.
 - [Testing policy](TESTING.md) — labels for source presence, build verification, emulator testing and physical hardware verification.
 
 ## Current blocker summary
