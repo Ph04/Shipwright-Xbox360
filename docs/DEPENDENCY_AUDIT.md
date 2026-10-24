@@ -1,69 +1,89 @@
-# Initial dependency and platform audit
+# Dependency and platform audit
 
 **Date:** 2026-10-24  
-**Status:** preliminary; based on upstream documentation and targeted file reads. A full dependency/source audit is still pending.
+**Status:** source-level audit expanded; exact upstream gitlink pin, dependency builds and target validation remain open.
 
-## Evidence collected
+## Current findings
 
-### Shipwright
+### Shipwright application
 
-The current upstream CMake entry point identifies Shipwright as version 9.3.1, requires CMake 3.26+, C++20 and C23, and defines desktop package setup for Windows including zlib, bzip2, libzip, libpng, SDL2, SDL2_net, GLEW, GLFW, nlohmann-json, tinyxml2, spdlog, Ogg/Vorbis and Opus/opusfile. The build guide documents Windows, macOS, Linux, Switch and Wii U paths; it does not list Xbox 360 as a supported target. Documented graphics APIs include Direct3D 11, OpenGL and Metal.
+The inspected upstream CMake entry point identifies Shipwright as 9.3.1, requires CMake 3.26+, C++20 and C23, uses a libultraship submodule and Torch, and contains no Xbox 360 target path. Its platform-specific configuration selects Direct3D 11 on Windows x64 and enables OpenGL on the generic GNU/Clang path. The application CMake searches for SDL2 and SDL2_net, fetches dr_libs for custom audio, and links Ogg/Vorbis/Opus/OpusFile in the relevant platform configurations.
 
 Sources:
 - https://github.com/HarbourMasters/Shipwright/blob/develop/CMakeLists.txt
+- https://github.com/HarbourMasters/Shipwright/blob/develop/soh/CMakeLists.txt
 - https://github.com/HarbourMasters/Shipwright/blob/develop/docs/BUILDING.md
+- https://github.com/HarbourMasters/Shipwright/blob/develop/.gitmodules
 
-Implication: the Xbox 360 target needs a deliberate toolchain and platform layer, not just compiler flags. The package list above is only a first observation from the Windows CMake branch, not a complete cross-platform dependency inventory.
+The dependency list above is a source-level inventory, not a complete closure or a statement that these packages build on PowerPC. The CMake file also assembles host-oriented tools (Torch and the OTR packer) alongside the game target; a cross-build must keep those tools on the host toolchain and pass generated OTR inputs to the target build.
 
-### xsdk
+### libultraship submodule: exact revision still required
 
-The xsdk getting-started guide specifies Windows 10/11 with WSL 2 and Debian, an RGH/JTAG console, and a custom PowerPC target toolchain (GCC 15.3, binutils 2.47 and newlib 4.6 for powerpc-xsdk-elf). The guide notes that unsigned .xex titles are for RGH/JTAG consoles; a standard retail console will not load them. Its parity document reports C17/C++23 runtime support and CMake integration, while listing limitations that must be checked before porting.
+Shipwright's .gitmodules points to https://github.com/kenix3/libultraship.git and names the port-maintenance branch. The actual checkout is fixed by the gitlink SHA stored in the selected Shipwright commit. That SHA must be recorded before code edits; the branch name alone does not establish which renderer or SDL integration is present in the checked-out source.
+
+The currently inspected libultraship CMake organizes Fast3D graphic backend sources, builds libultraship as a static library, and uses ImGui plus supporting libraries including libzip, nlohmann-json, tinyxml2, spdlog and stb_image. The precise requirements must be confirmed against the pinned submodule revision.
+
+Sources:
+- https://github.com/kenix3/libultraship/tree/port-maintenance
+- https://github.com/kenix3/libultraship/blob/port-maintenance/src/fast/CMakeLists.txt
+- https://github.com/kenix3/libultraship/blob/port-maintenance/src/CMakeLists.txt
+
+### SDL and platform services
+
+The inspected Shipwright application asks for SDL2/SDL2_net. The available Xbox port, SDL-xenon, is based on SDL 3.4.10; its port notes explicitly say it has no native video/render/GPU driver, only dummy and offscreen video drivers. It documents controller input, an audio bridge to xsdk, threads/timers and preference paths, but is not a direct SDL2 replacement.
+
+Source:
+- https://github.com/xenosworks/SDL-xenon/blob/xenon/docs/README-xsdk.md
+
+Implication: an Xbox-specific SDL/platform decision is required. Either maintain an SDL2 port/compatibility layer or port all required application and ImGui integration to SDL3. This has not been implemented.
+
+### Graphics feasibility
+
+The existing generic GNU/Clang application path enables OpenGL. xsdk's CMake toolchain uses CMAKE_SYSTEM_NAME=Generic, so the Xbox profile must explicitly prevent unsuitable desktop-OpenGL selection. Vulkan4Xenon is a Vulkan 1.0 subset over xsdk's GPU layer; it has an independently tested .xex and can be evaluated as a substrate, but does not claim Vulkan conformance and does not establish compatibility with Shipwright's Fast3D renderer or shaders.
+
+Sources:
+- https://github.com/xenosworks/xsdk/blob/main/cmake/xsdk.cmake
+- https://github.com/xenosworks/vulkan4xenon
+- https://github.com/xenosworks/vulkan4xenon/blob/main/docs/ROADMAP.md
+- https://github.com/xenosworks/dusklight-xenon/blob/xenon/docs/README-xsdk.md
+
+A renderer proof-of-concept must validate Fast3D operations, depth/stencil, blending, texture formats and mipmaps, render targets/resolves, shader compilation, presentation, frame cost and memory use on the intended target. A custom backend or substantial adaptation is expected; changing compile definitions is not enough.
+
+### xsdk and target environment
+
+xsdk supplies a custom PowerPC toolchain (GCC 15.3, binutils 2.47, newlib 4.6 for powerpc-xsdk-elf), CMake integration, C17/C++23 runtime support, input and audio APIs, and a path to generate .xex files. Its getting-started guide states that these unsigned titles are for RGH/JTAG consoles, not standard retail consoles. This is the candidate build foundation, not a verified Shipwright toolchain.
 
 Sources:
 - https://github.com/xenosworks/xsdk/blob/main/docs/GETTING_STARTED.md
 - https://github.com/xenosworks/xsdk/blob/main/docs/PARITY.md
-- https://github.com/xenosworks/xsdk
+- https://github.com/xenosworks/xsdk/blob/main/docs/PITFALLS.md
 
-Implication: xsdk is the first candidate for the build foundation. A successful xsdk sample is the first required engineering gate; it is not evidence that Shipwright itself compiles.
+### Dependency and renderer documents
 
-### Dusklight-Xenon as a reference port
+- [Dependency portability matrix](DEPENDENCY_MATRIX.md) — initial per-subsystem findings, work required and priority.
+- [Renderer feasibility](RENDERER_FEASIBILITY.md) — graphics, SDL, audio, asset pipeline and minimum test gates.
+- [Testing policy](TESTING.md) — labels for source presence, build verification, emulator testing and physical hardware verification.
 
-Dusklight-Xenon documents a real port built with xsdk and drawn through Vulkan4Xenon, with SDL-xenon and glslang-xenon in its build path. Its port-specific notes describe a 1280x720 output, a constrained memory budget, console-specific thread placement, a shader-pack workflow, and features intentionally left out. The project notes that some shaders are compiled on first use and cached.
+## Current blocker summary
 
-Sources:
-- https://github.com/xenosworks/dusklight-xenon
-- https://github.com/xenosworks/dusklight-xenon/blob/main/docs/README-xsdk.md
-
-Implication: this is a useful reference for integration patterns, memory budgeting, shader handling and CMake/toolchain setup. It is a different game and renderer, so it does **not** prove Shipwright's graphics operations or shaders are supported by Vulkan4Xenon.
-
-### Vulkan4Xenon
-
-xsdk describes Vulkan4Xenon as a Vulkan 1.0 subset built on the xsdk GPU layer.
-
-Source: https://github.com/xenosworks/vulkan4xenon
-
-Implication: treat this as a candidate backend, not a drop-in compatibility guarantee. We need to inventory the exact graphics features, shader inputs, resource formats, synchronization, render targets and presentation behavior used by Shipwright.
-
-## Initial blocker matrix
-
-| Area | Initial assessment | Evidence needed |
+| Area | Finding | Gate before broader integration |
 |---|---|---|
-| Toolchain | Candidate: xsdk; target is PowerPC | Build a sample from a clean checkout; record toolchain versions and output |
-| Console compatibility | RGH/JTAG required for unsigned .xex according to xsdk docs | Confirm user's target environment before planning distribution |
-| Entry point / runtime | Unknown for Shipwright | Map startup, lifecycle, filesystem, logging, timing |
-| Graphics | Highest-risk area | Compare Shipwright API calls and shaders with Vulkan4Xenon coverage; build a focused renderer probe |
-| Input | SDL/controller adaptation likely required | Inspect SDL-xenon and map Shipwright input/event abstractions |
-| Audio | Unknown | Inventory Shipwright's actual audio backend and test available APIs |
-| Third-party libraries | Partial list only | Full CMake/submodule/transitive dependency inventory, licenses, and port status |
-| Asset pipeline | Potentially reusable, unverified | Test extraction/build tools on host separately from target runtime |
-| Saves/configuration | Unknown | Identify path assumptions and writable storage strategy |
-| Memory/performance | Significant concern | Establish baseline and budget; console CPU/GPU share physical memory |
-| Shader strategy | Unknown for Shipwright | Identify shader sources and runtime compiler assumptions; assess precompiled-pack feasibility |
+| Upstream baseline | Current develop files inspected; immutable selected commit and submodule gitlink not yet recorded | Pin exact Shipwright commit, libultraship gitlink SHA, Torch gitlink SHA and license notices |
+| Toolchain | xsdk is a credible homebrew candidate; Shipwright has not been built with it | Build clean xsdk hello/triangle samples; record logs and versions |
+| Platform/runtime | No Xbox 360 target/profile in current application CMake | Prove startup, logging, controller, timing, writable paths and clean shutdown in a small .xex |
+| SDL | SoH requests SDL2; SDL-xenon is SDL3 and has no native video/render driver | Decide and implement SDL API/platform path |
+| Graphics | Existing path selects OpenGL; Vulkan4Xenon subset is not proven against Fast3D | Standalone renderer probe and hardware evidence |
+| Audio | SDL bridge exists, but SoH's complete audio route is not yet mapped | Trace playback path; test tone and representative formats |
+| Dependencies | Initial CMake inventory only; no libraries certified for PowerPC | Pin versions/licenses, cross-build one at a time and test link closure |
+| Asset pipeline | Host tools are co-configured with target build | Build host tools separately and avoid committing ROMs/extracted assets |
+| Memory/performance | No Shipwright-specific allocation or frame-cost measurements | Add memory, timing and cache instrumentation during the probe |
 
-## Next source inspection
+## Next engineering sequence
 
-1. Pin the exact Shipwright commit and inspect the rest of its root CMake configuration, submodules, renderer selection and platform-specific files.
-2. Read xsdk's getting-started, parity, pitfalls and sample build scripts; choose one minimal sample as the first reproducible build.
-3. Inspect Dusklight-Xenon and its SDL-xenon/Aurora integration for patterns that can be adapted without copying game-specific code.
-4. Produce a per-library matrix with exact versions, source paths, licenses, target availability, changes needed and verification status.
-5. Only after those checks, add a minimal Xbox 360 build profile and a renderer proof-of-concept. No full-game build is claimed at this stage.
+1. Record a fixed upstream revision and exact submodule gitlinks.
+2. Build and record the stock xsdk hello and triangle samples from a clean environment.
+3. Add a minimal target platform test for logging, controller, filesystem, audio and exit.
+4. Build the renderer proof-of-concept and decide Vulkan4Xenon versus a native xsdk GPU backend based on evidence.
+5. Finish dependency/license closure and only then integrate a small Shipwright application slice.
+
+No Shipwright Xbox 360 build, emulator test or hardware test is claimed at this stage.
