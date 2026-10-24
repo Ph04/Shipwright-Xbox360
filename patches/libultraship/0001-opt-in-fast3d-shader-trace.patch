@@ -1,0 +1,35 @@
+diff --git a/src/fast/backends/gfx_opengl.cpp b/src/fast/backends/gfx_opengl.cpp
+--- a/src/fast/backends/gfx_opengl.cpp
++++ b/src/fast/backends/gfx_opengl.cpp
+@@ -406,8 +406,30 @@ ShaderProgram* GfxRenderingAPIOGL::CreateAndLoadNewShader(uint64_t shader_id0, uint64_t shader_id1) {
+     const auto vs_buf = BuildVsShader(cc_features);
+     const GLchar* sources[2] = { vs_buf.data(), fs_buf.data() };
+     const GLint lengths[2] = { (GLint)vs_buf.size(), (GLint)fs_buf.size() };
++
++    // Opt-in host-side trace. A unique Fast3D key produces two plain GLSL files
++    // that can be batch-compiled to SPIR-V and checked against XSDK/xost later.
++#ifdef SOH_TRACE_SHADERS
++    char vertex_path[160];
++    char fragment_path[160];
++    std::snprintf(vertex_path, sizeof(vertex_path), "soh-shader-%016llx-%016llx.vert.glsl",
++                  static_cast<unsigned long long>(shader_id0), static_cast<unsigned long long>(shader_id1));
++    std::snprintf(fragment_path, sizeof(fragment_path), "soh-shader-%016llx-%016llx.frag.glsl",
++                  static_cast<unsigned long long>(shader_id0), static_cast<unsigned long long>(shader_id1));
++
++    std::ofstream vertex_dump(vertex_path, std::ios::binary);
++    vertex_dump.write(vs_buf.data(), static_cast<std::streamsize>(vs_buf.size()));
++    const bool vertex_dump_ok = vertex_dump.good();
++    vertex_dump.close();
++
++    std::ofstream fragment_dump(fragment_path, std::ios::binary);
++    fragment_dump.write(fs_buf.data(), static_cast<std::streamsize>(fs_buf.size()));
++    const bool fragment_dump_ok = fragment_dump.good();
++    fragment_dump.close();
++
++    SPDLOG_INFO("[SOH-SHADER-TRACE] key0=0x{:016X} key1=0x{:016X} vertex_bytes={} fragment_bytes={} vertex_dump={} fragment_dump={}",
++                shader_id0, shader_id1, vs_buf.size(), fs_buf.size(), vertex_dump_ok, fragment_dump_ok);
++#endif
++
+     GLint success;
+ 
+     GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
