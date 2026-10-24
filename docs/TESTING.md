@@ -9,6 +9,12 @@ Every test report should state:
 - Target: host build, emulator, or physical Xbox 360.
 - For hardware tests: console/model context and observed behavior.
 
+## CI smoke gate
+
+The workflow in [`.github/workflows/xsdk-smoke.yml`](../.github/workflows/xsdk-smoke.yml) builds a pinned xsdk toolchain and its official `hello`/`triangle` samples, then uploads compiler logs and generated `.xex` files. The script records the exact xsdk revision and artifact hashes. A workflow run is considered successful only if both expected `.xex` files are present and non-empty.
+
+That workflow is compile-only. It does not build Shipwright, run an emulator, or run the title on hardware. Only report it as passed after checking the actual GitHub Actions run result and logs.
+
 ## No unsupported claims
 
 - Source added does not mean it compiles.
