@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -uo pipefail
+set -euo pipefail
 
 # Compile every captured Fast3D shader independently through the pinned xsdk
 # tool, producing a per-shader header and a manifest even when some shaders fail.
@@ -109,14 +109,16 @@ for input in "$INPUT_DIR"/*; do
   TOTAL=$((TOTAL + 1))
   if python3 "$XSDK_ROOT/tools/build_shaders.py" --glslang "$GLSLANG" --output "$header" "$input" >"$log" 2>&1; then
     status="PASS"
+    exit_code=0
     PASSED=$((PASSED + 1))
     echo "PASS $name"
   else
     status="FAIL"
+    exit_code=1
     FAILED=$((FAILED + 1))
     echo "FAIL $name — see $log"
   fi
-  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$key0" "$key1" "$stage" "$(basename "$input")" "$status" "$((status == "PASS" ? 0 : 1))" "$(basename "$header")" "$(basename "$log")" >> "$MANIFEST"
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$key0" "$key1" "$stage" "$(basename "$input")" "$status" "$exit_code" "$(basename "$header")" "$(basename "$log")" >> "$MANIFEST"
 done
 
 echo "Compiled $TOTAL shader stages: $PASSED passed, $FAILED failed."
