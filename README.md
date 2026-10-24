@@ -27,7 +27,7 @@ Vulkan4Xenon is a candidate, not a drop-in guarantee. The next proof is to build
 - [docs/DEPENDENCY_MATRIX.md](docs/DEPENDENCY_MATRIX.md) — subsystem-by-subsystem portability work and priority.
 - [docs/RENDERER_FEASIBILITY.md](docs/RENDERER_FEASIBILITY.md) — graphics, SDL, audio, asset-pipeline findings and test gates.
 - [docs/SHADER_PIPELINE.md](docs/SHADER_PIPELINE.md) — Fast3D's dynamic GLSL generation versus XSDK's SPIR-V shader compiler.
-- [docs/SHADER_TRACE.md](docs/SHADER_TRACE.md) and [patch helper](tools/apply-fast3d-shader-trace.sh) — opt-in collection of actual desktop-generated shader pairs.
+- [docs/SHADER_TRACE.md](docs/SHADER_TRACE.md), [patch helper](tools/apply-fast3d-shader-trace.sh) and [offline shader analyzer](scripts/compile-fast3d-shader-dumps.sh) — capture generated pairs and test them independently with pinned XSDK/xost.
 - [docs/TESTING.md](docs/TESTING.md) — validation and evidence policy.
 
 ## Upstream projects
