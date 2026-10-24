@@ -3,7 +3,7 @@
 **Reviewed:** 2026-10-24  
 **Status:** preliminary source-based inventory; no target dependency has been certified as built.
 
-This matrix separates source presence from Xbox 360 build/runtime verification. The exact Shipwright commit and the precise libultraship submodule gitlink must be pinned before source modifications are based on these findings.
+This matrix separates source presence from Xbox 360 build/runtime verification. The source baseline and exact submodule gitlinks are pinned in [BASELINE.md](BASELINE.md); none of those pins implies a successful target build.
 
 | Component / subsystem | Evidence in current source | Xbox 360 assessment | Required action | Priority |
 |---|---|---|---|---|
@@ -31,8 +31,7 @@ The upstream CMake files pin some fetched dependencies but also use package disc
 
 ## Recommended order
 
-1. Pin Shipwright's exact commit, including the gitlink SHA for libultraship and Torch.
-2. Build the stock xsdk hello and triangle samples in a clean environment.
+1. Build the stock xsdk hello and triangle samples in a clean environment.
 3. Build a target logging/input/audio/filesystem test.
 4. Build the renderer probe and settle the graphics architecture.
 5. Port dependency closure and only then enable the SoH application target.
