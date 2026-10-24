@@ -61,9 +61,10 @@ For an actionable setup to collect the generated pairs described below, use [SHA
 
 1. **Host shader trace:** build the pinned desktop renderer, log every distinct shader key, generated source hash, and any shader compile failures during representative scene coverage. Do not store game ROMs or copyrighted extracted assets in this repository.
 2. **Offline compiler probe:** compile a representative set of generated GLSL through a pinned glslang version, then through xsdk's `xsdk_xsc_compile`. Record accepted/refused status and the refusal message for every key.
-3. **Target compile probe:** build a tiny .xex that loads a known SPIR-V shader, invokes the runtime xost path, draws a result and records memory/latency. This verifies the target API before integrating the whole Fast3D backend.
-4. **Dynamic-frontend spike:** separately compile/link a small GLSL frontend for the PowerPC target and measure executable size, peak allocated bytes, time for the first shader and cache-hit time. Include shader sources with the constructs used by the real Fast3D generator.
-5. **Decision:** compare complete-cache coverage and runtime compilation cost. Choose A, B or C only with logs and measured evidence. If no path has acceptable coverage and cost, treat the renderer port as blocked rather than hiding the problem behind a stub.
+3. **Offline batch experiment:** run [compile-fast3d-shader-dumps.sh](../scripts/compile-fast3d-shader-dumps.sh) against captured source and keep the manifest/logs; report the exact rejected shader keys and xost refusal messages.
+4. **Target compile probe:** build a tiny .xex that loads a known SPIR-V shader, invokes the runtime xost path, draws a result and records memory/latency. This verifies the target API before integrating the whole Fast3D backend.
+5. **Dynamic-frontend spike:** separately compile/link a small GLSL frontend for the PowerPC target and measure executable size, peak allocated bytes, time for the first shader and cache-hit time. Include shader sources with the constructs used by the real Fast3D generator.
+6. **Decision:** compare complete-cache coverage and runtime compilation cost. Choose A, B or C only with logs and measured evidence. If no path has acceptable coverage and cost, treat the renderer port as blocked rather than hiding the problem behind a stub.
 
 ## 5. Required diagnostics in any prototype
 
