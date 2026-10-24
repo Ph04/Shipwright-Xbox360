@@ -28,7 +28,8 @@ These supporting revisions are evidence references only. Before importing or ada
 
 - libultraship at the pinned gitlink contains an MIT LICENSE: https://github.com/kenix3/libultraship/blob/da6daf1a50a5e46d6641408d52227e31e85e46df/LICENSE
 - Torch at the pinned gitlink contains an MIT LICENSE: https://github.com/HarbourMasters/Torch/blob/2ab12fe9660aec04e02ee89fe81baed304a1a1d6/LICENSE
-- xsdk and Vulkan4Xenon each expose MIT LICENSE files at the reviewed main-branch revisions. The exact research snapshots are linked above.
+- xsdk exposes an MIT LICENSE at the reviewed revision: https://github.com/xenosworks/xsdk/blob/2c4599b31066efcf67be099673287fbec786ef14/LICENSE
+- Vulkan4Xenon exposes an MIT LICENSE at the reviewed revision: https://github.com/xenosworks/vulkan4xenon/blob/b79913b407504b1e1663e74b14579cd91d2e7040/LICENSE.
 - The root listing for the inspected Shipwright commit did not show a top-level LICENSE file. This is not a legal conclusion about the project: the license/permission status for any source to be copied or redistributed still needs an explicit review of upstream notices and policies.
 - Every dependency brought into the port needs its own license and notice record. Build scripts must not pull ROMs, extracted copyrighted assets, or other user-supplied content into a distributable artifact.
 
