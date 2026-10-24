@@ -25,6 +25,11 @@ if [[ "$ACTUAL_SHA" != "$EXPECTED_SHA" ]]; then
   exit 3
 fi
 
+if grep -q "SOH-SHADER-TRACE" "$TARGET/src/fast/backends/gfx_opengl.cpp"; then
+  echo "Shader trace patch is already present in $ACTUAL_SHA."
+  exit 0
+fi
+
 git -C "$TARGET" apply --check "$PATCH"
 git -C "$TARGET" apply "$PATCH"
 echo "Shader trace patch applied to $ACTUAL_SHA."
