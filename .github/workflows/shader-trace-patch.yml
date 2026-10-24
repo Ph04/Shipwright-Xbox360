@@ -7,6 +7,7 @@ on:
       - '.github/workflows/shader-trace-patch.yml'
       - 'patches/libultraship/**'
       - 'tools/apply-fast3d-shader-trace.sh'
+      - 'scripts/compile-fast3d-shader-dumps.sh'
 
 permissions:
   contents: read
@@ -21,7 +22,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check helper syntax
-        run: bash -n tools/apply-fast3d-shader-trace.sh
+        run: |
+          bash -n tools/apply-fast3d-shader-trace.sh
+          bash -n scripts/compile-fast3d-shader-dumps.sh
 
       - name: Fetch exact libultraship gitlink
         env:
