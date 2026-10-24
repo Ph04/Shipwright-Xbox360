@@ -55,6 +55,8 @@ Change the shader representation to a more constrained or precompiled pipeline d
 
 **Risks:** largest rewrite, and there is no evidence yet that the simpler representation covers all existing combiner and framebuffer behavior.
 
+For an actionable setup to collect the generated pairs described below, use [SHADER_TRACE.md](SHADER_TRACE.md) and the pinned-source helper [apply-fast3d-shader-trace.sh](../tools/apply-fast3d-shader-trace.sh).
+
 ## 4. Recommended experiments, in order
 
 1. **Host shader trace:** build the pinned desktop renderer, log every distinct shader key, generated source hash, and any shader compile failures during representative scene coverage. Do not store game ROMs or copyrighted extracted assets in this repository.
