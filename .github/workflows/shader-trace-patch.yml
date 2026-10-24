@@ -1,0 +1,40 @@
+name: Fast3D shader trace patch check
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/shader-trace-patch.yml'
+      - 'patches/libultraship/**'
+      - 'tools/apply-fast3d-shader-trace.sh'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-pinned-patch:
+    name: Apply shader trace patch to pinned libultraship
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out this porting repository
+        uses: actions/checkout@v4
+
+      - name: Check helper syntax
+        run: bash -n tools/apply-fast3d-shader-trace.sh
+
+      - name: Fetch exact libultraship gitlink
+        env:
+          LIBULTRASHIP_SHA: da6daf1a50a5e46d6641408d52227e31e85e46df
+        run: |
+          git clone --no-checkout https://github.com/kenix3/libultraship.git "$RUNNER_TEMP/libultraship"
+          git -C "$RUNNER_TEMP/libultraship" fetch --depth=1 origin "$LIBULTRASHIP_SHA"
+          git -C "$RUNNER_TEMP/libultraship" checkout --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/libultraship" rev-parse HEAD)" = "$LIBULTRASHIP_SHA"
+
+      - name: Apply and verify trace patch
+        run: |
+          bash tools/apply-fast3d-shader-trace.sh "$RUNNER_TEMP/libultraship"
+          git -C "$RUNNER_TEMP/libultraship" diff --check
+          git -C "$RUNNER_TEMP/libultraship" diff -- src/fast/backends/gfx_opengl.cpp
+          grep -q 'SOH-SHADER-TRACE' "$RUNNER_TEMP/libultraship/src/fast/backends/gfx_opengl.cpp"
