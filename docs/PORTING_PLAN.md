@@ -2,15 +2,15 @@
 
 ## Phase 0 — Baseline and feasibility (current)
 
-- [ ] Record the exact upstream Shipwright commit, license notices and immutable source baseline.
-- [x] Inspect the current application CMake, renderer selection and platform-specific source branches at source level. Exact libultraship/Torch gitlink SHAs still need to be pinned.
+- [x] Record the exact upstream Shipwright commit and immutable libultraship/Torch submodule gitlinks in [BASELINE.md](BASELINE.md). License/permission review remains open.
+- [x] Inspect application CMake, renderer selection and platform-specific source branches at the pinned source baseline.
 - [x] Review xsdk, Vulkan4Xenon, SDL-xenon and Dusklight-Xenon build/port documentation.
 - [ ] Build the smallest supported xsdk sample in a clean, reproducible environment.
 - [ ] Record compiler versions and whether each test was compile-only, emulator-tested or verified on physical hardware.
 
 **Exit criteria:** a pinned baseline, documented toolchain setup, and a reproducible minimal .xex test. Do not begin broad source integration before this passes.
 
-Current evidence and open issues are captured in [DEPENDENCY_AUDIT.md](DEPENDENCY_AUDIT.md), [DEPENDENCY_MATRIX.md](DEPENDENCY_MATRIX.md) and [RENDERER_FEASIBILITY.md](RENDERER_FEASIBILITY.md).
+Current evidence and open issues are captured in [BASELINE.md](BASELINE.md), [DEPENDENCY_AUDIT.md](DEPENDENCY_AUDIT.md), [DEPENDENCY_MATRIX.md](DEPENDENCY_MATRIX.md) and [RENDERER_FEASIBILITY.md](RENDERER_FEASIBILITY.md).
 
 ## Phase 1 — Platform bring-up
 
@@ -40,7 +40,7 @@ Prefer small adapters behind existing interfaces. Keep optional scripting, dynam
 ## Phase 3 — Renderer feasibility
 
 - [x] Inspect current renderer-selection configuration at source level.
-- [ ] Pin the exact libultraship submodule revision and identify the exact selected Fast3D backend in that snapshot.
+- [x] Pin the exact libultraship submodule revision; identify and trace the selected Fast3D backend in that snapshot (source mapping still pending).
 - [ ] Map required graphics operations to a Vulkan4Xenon-backed route or a native Xenos backend.
 - [ ] Inventory shader formats, shader tools, render targets, texture formats, synchronization and presentation requirements.
 - [ ] Build a focused renderer proof-of-concept independent of game logic; measure CPU time and memory on the intended target.
