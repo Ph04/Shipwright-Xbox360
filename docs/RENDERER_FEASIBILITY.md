@@ -70,8 +70,8 @@ The graphics proof-of-concept must answer these questions with a runnable .xex, 
 The application uses a custom audio dependency path (dr_libs) and links Ogg/Vorbis/Opus libraries. SDL-xenon's audio bridge feeds xsdk's API, which expects six channels of big-endian float audio at 48 kHz in 256-frame chunks. The audio architecture must be traced to determine whether SDL actually owns playback in each configuration or whether SoH's custom path bypasses it.
 
 Sources:
-- https://github.com/HarbourMasters/Shipwright/blob/develop/soh/CMakeLists.txt
-- https://github.com/xenosworks/SDL-xenon/blob/xenon/docs/README-xsdk.md
+- https://github.com/HarbourMasters/Shipwright/blob/2827fc2a0f56a9cdc18a87adf8c1bb7e91315f41/soh/CMakeLists.txt
+- https://github.com/xenosworks/SDL-xenon/blob/adb87a744ae056f1849718770cf198fa6c4899f9/docs/README-xsdk.md
 
 Required test sequence: silent boot; one sustained tone; Ogg/Vorbis; Opus; music/effects concurrently; pause/resume; long-running underrun and memory logging.
 
