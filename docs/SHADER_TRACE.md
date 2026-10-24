@@ -30,6 +30,16 @@ The hexadecimal IDs in the filenames are zero-padded to 16 digits. Keep pairs to
 
 The current OpenGL renderer caches programs by the two IDs, so this capture records each key when the renderer first creates its program during that process. Re-run different settings and scenes to improve coverage. A captured set is not proof that every possible game path or user configuration was exercised.
 
+## Offline SPIR-V/Xenos compiler experiment
+
+Once XSDK's host compiler has been built and the matching revision is available, run:
+
+```bash
+bash scripts/compile-fast3d-shader-dumps.sh /path/to/shader-dumps /path/to/pinned-xsdk /path/to/results
+```
+
+An optional fourth argument supplies the executable path to glslang. The helper validates that both stages exist for each key, renames them to the extensions expected by XSDK's official `tools/build_shaders.py`, then tests every vertex/fragment stage independently. Results include one log per stage, a header for every accepted stage and a TSV manifest with the two shader IDs, stage, status and exit code. It attempts the full set even if individual shaders are refused, then exits nonzero when any stage fails. The generated headers are test outputs, not yet integrated into Shipwright's runtime shader selection.
+
 ## Evidence to retain
 
 Keep a simple run manifest containing: Shipwright commit, libultraship SHA, compiler/build configuration, scenes exercised, application log, number of unique shader keys, number of complete vertex/fragment pairs, and any write/compile failures. A later analysis can batch-compile the generated files to SPIR-V and pass them through the pinned xost compiler; that experiment must separately record accepted versus refused shaders and refusal messages.
