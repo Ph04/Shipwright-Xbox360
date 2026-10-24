@@ -16,11 +16,12 @@ An independent, experimental effort to investigate porting [Ship of Harkinian / 
 
 The source audit identifies the graphics/backend selection and SDL platform boundary as the main early blockers. The inspected Shipwright application configuration uses SDL2 and enables OpenGL on its generic GNU/Clang path. The available SDL-xenon port is SDL3 and documents only dummy/offscreen video drivers; rendering must use xsdk's GPU layer or a backend such as Vulkan4Xenon. This means a real renderer/platform adaptation is required rather than a simple cross-compile.
 
-Vulkan4Xenon is a candidate, not a drop-in guarantee. The next proof is to build the stock xsdk samples and then a small, instrumented renderer/platform probe. The source baseline is now pinned in [BASELINE.md](docs/BASELINE.md): Shipwright `2827fc2a0f56a9cdc18a87adf8c1bb7e91315f41`, libultraship `da6daf1a50a5e46d6641408d52227e31e85e46df`, and Torch `2ab12fe9660aec04e02ee89fe81baed304a1a1d6`. No target build has been completed in this repository.
+Vulkan4Xenon is a candidate, not a drop-in guarantee. The next proof is to build the stock xsdk samples and then a small, instrumented renderer/platform probe. The source baseline is pinned in [BASELINE.md](docs/BASELINE.md): Shipwright `2827fc2a0f56a9cdc18a87adf8c1bb7e91315f41`, libultraship `da6daf1a50a5e46d6641408d52227e31e85e46df`, and Torch `2ab12fe9660aec04e02ee89fe81baed304a1a1d6`. An automated CI job now attempts to build official xsdk samples as a first gate; a passing sample build will not prove Shipwright builds or runs.
 
 ## Repository map
 
 - [docs/BASELINE.md](docs/BASELINE.md) — immutable source revisions and license-review status.
+- [scripts/ci-xsdk-smoke.sh](scripts/ci-xsdk-smoke.sh) and [xsdk-smoke workflow](.github/workflows/xsdk-smoke.yml) — repeatable cross-compile of official XSDK samples; output logs and `.xex` files are uploaded as artifacts.
 - [docs/PORTING_PLAN.md](docs/PORTING_PLAN.md) — staged engineering plan and gates.
 - [docs/DEPENDENCY_AUDIT.md](docs/DEPENDENCY_AUDIT.md) — source evidence and current blockers.
 - [docs/DEPENDENCY_MATRIX.md](docs/DEPENDENCY_MATRIX.md) — subsystem-by-subsystem portability work and priority.
