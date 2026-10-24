@@ -1,7 +1,7 @@
 diff --git a/src/fast/backends/gfx_opengl.cpp b/src/fast/backends/gfx_opengl.cpp
 --- a/src/fast/backends/gfx_opengl.cpp
 +++ b/src/fast/backends/gfx_opengl.cpp
-@@ -21,8 +21,9 @@
+@@ -21,7 +21,8 @@
  #include "fast/backends/gfx_opengl.h"
  #include "ship/window/gui/Gui.h"
  #include <prism/processor.h>
