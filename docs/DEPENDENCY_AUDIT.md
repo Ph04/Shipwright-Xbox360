@@ -1,7 +1,7 @@
 # Dependency and platform audit
 
 **Date:** 2026-10-24  
-**Status:** source-level audit expanded; exact upstream gitlink pin, dependency builds and target validation remain open.
+**Status:** source-level audit expanded; Shipwright and submodule revisions are pinned. Dependency builds and target validation remain open.
 
 ## Current findings
 
@@ -10,30 +10,31 @@
 The inspected upstream CMake entry point identifies Shipwright as 9.3.1, requires CMake 3.26+, C++20 and C23, uses a libultraship submodule and Torch, and contains no Xbox 360 target path. Its platform-specific configuration selects Direct3D 11 on Windows x64 and enables OpenGL on the generic GNU/Clang path. The application CMake searches for SDL2 and SDL2_net, fetches dr_libs for custom audio, and links Ogg/Vorbis/Opus/OpusFile in the relevant platform configurations.
 
 Sources:
-- https://github.com/HarbourMasters/Shipwright/blob/develop/CMakeLists.txt
-- https://github.com/HarbourMasters/Shipwright/blob/develop/soh/CMakeLists.txt
-- https://github.com/HarbourMasters/Shipwright/blob/develop/docs/BUILDING.md
-- https://github.com/HarbourMasters/Shipwright/blob/develop/.gitmodules
+- https://github.com/HarbourMasters/Shipwright/blob/2827fc2a0f56a9cdc18a87adf8c1bb7e91315f41/CMakeLists.txt
+- https://github.com/HarbourMasters/Shipwright/blob/2827fc2a0f56a9cdc18a87adf8c1bb7e91315f41/soh/CMakeLists.txt
+- https://github.com/HarbourMasters/Shipwright/blob/2827fc2a0f56a9cdc18a87adf8c1bb7e91315f41/docs/BUILDING.md
+- https://github.com/HarbourMasters/Shipwright/blob/2827fc2a0f56a9cdc18a87adf8c1bb7e91315f41/.gitmodules
+- Full revision record: [BASELINE.md](BASELINE.md)
 
 The dependency list above is a source-level inventory, not a complete closure or a statement that these packages build on PowerPC. The CMake file also assembles host-oriented tools (Torch and the OTR packer) alongside the game target; a cross-build must keep those tools on the host toolchain and pass generated OTR inputs to the target build.
 
-### libultraship submodule: exact revision still required
+### libultraship submodule: pinned revision
 
-Shipwright's .gitmodules points to https://github.com/kenix3/libultraship.git and names the port-maintenance branch. The actual checkout is fixed by the gitlink SHA stored in the selected Shipwright commit. That SHA must be recorded before code edits; the branch name alone does not establish which renderer or SDL integration is present in the checked-out source.
+At Shipwright commit `2827fc2a0f56a9cdc18a87adf8c1bb7e91315f41`, the libultraship gitlink is pinned to [`da6daf1a50a5e46d6641408d52227e31e85e46df`](https://github.com/kenix3/libultraship/tree/da6daf1a50a5e46d6641408d52227e31e85e46df); the Torch gitlink is pinned to [`2ab12fe9660aec04e02ee89fe81baed304a1a1d6`](https://github.com/HarbourMasters/Torch/tree/2ab12fe9660aec04e02ee89fe81baed304a1a1d6). Use those immutable revisions for source changes, not the moving branch names in `.gitmodules`.
 
 The currently inspected libultraship CMake organizes Fast3D graphic backend sources, builds libultraship as a static library, and uses ImGui plus supporting libraries including libzip, nlohmann-json, tinyxml2, spdlog and stb_image. The precise requirements must be confirmed against the pinned submodule revision.
 
 Sources:
-- https://github.com/kenix3/libultraship/tree/port-maintenance
-- https://github.com/kenix3/libultraship/blob/port-maintenance/src/fast/CMakeLists.txt
-- https://github.com/kenix3/libultraship/blob/port-maintenance/src/CMakeLists.txt
+- https://github.com/kenix3/libultraship/tree/da6daf1a50a5e46d6641408d52227e31e85e46df
+- https://github.com/kenix3/libultraship/blob/da6daf1a50a5e46d6641408d52227e31e85e46df/src/fast/CMakeLists.txt
+- https://github.com/kenix3/libultraship/blob/da6daf1a50a5e46d6641408d52227e31e85e46df/src/CMakeLists.txt
 
 ### SDL and platform services
 
 The inspected Shipwright application asks for SDL2/SDL2_net. The available Xbox port, SDL-xenon, is based on SDL 3.4.10; its port notes explicitly say it has no native video/render/GPU driver, only dummy and offscreen video drivers. It documents controller input, an audio bridge to xsdk, threads/timers and preference paths, but is not a direct SDL2 replacement.
 
 Source:
-- https://github.com/xenosworks/SDL-xenon/blob/xenon/docs/README-xsdk.md
+- https://github.com/xenosworks/SDL-xenon/blob/adb87a744ae056f1849718770cf198fa6c4899f9/docs/README-xsdk.md
 
 Implication: an Xbox-specific SDL/platform decision is required. Either maintain an SDL2 port/compatibility layer or port all required application and ImGui integration to SDL3. This has not been implemented.
 
@@ -42,10 +43,10 @@ Implication: an Xbox-specific SDL/platform decision is required. Either maintain
 The existing generic GNU/Clang application path enables OpenGL. xsdk's CMake toolchain uses CMAKE_SYSTEM_NAME=Generic, so the Xbox profile must explicitly prevent unsuitable desktop-OpenGL selection. Vulkan4Xenon is a Vulkan 1.0 subset over xsdk's GPU layer; it has an independently tested .xex and can be evaluated as a substrate, but does not claim Vulkan conformance and does not establish compatibility with Shipwright's Fast3D renderer or shaders.
 
 Sources:
-- https://github.com/xenosworks/xsdk/blob/main/cmake/xsdk.cmake
-- https://github.com/xenosworks/vulkan4xenon
-- https://github.com/xenosworks/vulkan4xenon/blob/main/docs/ROADMAP.md
-- https://github.com/xenosworks/dusklight-xenon/blob/xenon/docs/README-xsdk.md
+- https://github.com/xenosworks/xsdk/blob/2c4599b31066efcf67be099673287fbec786ef14/cmake/xsdk.cmake
+- https://github.com/xenosworks/vulkan4xenon/tree/b79913b407504b1e1663e74b14579cd91d2e7040
+- https://github.com/xenosworks/vulkan4xenon/blob/b79913b407504b1e1663e74b14579cd91d2e7040/docs/ROADMAP.md
+- https://github.com/xenosworks/dusklight-xenon/blob/d04e793671ca50bf3dad5dc3f5a16a45974558e3/docs/README-xsdk.md
 
 A renderer proof-of-concept must validate Fast3D operations, depth/stencil, blending, texture formats and mipmaps, render targets/resolves, shader compilation, presentation, frame cost and memory use on the intended target. A custom backend or substantial adaptation is expected; changing compile definitions is not enough.
 
@@ -68,7 +69,7 @@ Sources:
 
 | Area | Finding | Gate before broader integration |
 |---|---|---|
-| Upstream baseline | Current develop files inspected; immutable selected commit and submodule gitlink not yet recorded | Pin exact Shipwright commit, libultraship gitlink SHA, Torch gitlink SHA and license notices |
+| Upstream baseline | Shipwright `2827fc2...` and both submodule gitlinks are pinned | Finish review of upstream notices/license permissions and audit every redistributed dependency |
 | Toolchain | xsdk is a credible homebrew candidate; Shipwright has not been built with it | Build clean xsdk hello/triangle samples; record logs and versions |
 | Platform/runtime | No Xbox 360 target/profile in current application CMake | Prove startup, logging, controller, timing, writable paths and clean shutdown in a small .xex |
 | SDL | SoH requests SDL2; SDL-xenon is SDL3 and has no native video/render driver | Decide and implement SDL API/platform path |
@@ -80,8 +81,7 @@ Sources:
 
 ## Next engineering sequence
 
-1. Record a fixed upstream revision and exact submodule gitlinks.
-2. Build and record the stock xsdk hello and triangle samples from a clean environment.
+1. Build and record the stock xsdk hello and triangle samples from a clean environment.
 3. Add a minimal target platform test for logging, controller, filesystem, audio and exit.
 4. Build the renderer proof-of-concept and decide Vulkan4Xenon versus a native xsdk GPU backend based on evidence.
 5. Finish dependency/license closure and only then integrate a small Shipwright application slice.
