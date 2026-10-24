@@ -57,9 +57,9 @@ A renderer proof-of-concept must validate Fast3D operations, depth/stencil, blen
 xsdk supplies a custom PowerPC toolchain (GCC 15.3, binutils 2.47, newlib 4.6 for powerpc-xsdk-elf), CMake integration, C17/C++23 runtime support, input and audio APIs, and a path to generate .xex files. Its getting-started guide states that these unsigned titles are for RGH/JTAG consoles, not standard retail consoles. This is the candidate build foundation, not a verified Shipwright toolchain.
 
 Sources:
-- https://github.com/xenosworks/xsdk/blob/main/docs/GETTING_STARTED.md
-- https://github.com/xenosworks/xsdk/blob/main/docs/PARITY.md
-- https://github.com/xenosworks/xsdk/blob/main/docs/PITFALLS.md
+- https://github.com/xenosworks/xsdk/blob/2c4599b31066efcf67be099673287fbec786ef14/docs/GETTING_STARTED.md
+- https://github.com/xenosworks/xsdk/blob/2c4599b31066efcf67be099673287fbec786ef14/docs/PARITY.md
+- https://github.com/xenosworks/xsdk/blob/2c4599b31066efcf67be099673287fbec786ef14/docs/PITFALLS.md
 
 ### Dependency and renderer documents
 
