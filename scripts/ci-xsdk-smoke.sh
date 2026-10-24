@@ -55,7 +55,7 @@ ln -sf "$(command -v glslangValidator)" "$PREFIX/bin/glslang"
 
 (
   cd "$XSDK_SRC"
-  make -j"$JOBS" samples TOOLCHAIN="$PREFIX/bin/powerpc-xsdk-elf-"
+  make -j"$JOBS" samples SAMPLES="hello triangle" TOOLCHAIN="$PREFIX/bin/powerpc-xsdk-elf-"
 ) 2>&1 | tee "$LOG_DIR/samples-build.log"
 
 for sample in hello triangle; do
