@@ -5,10 +5,10 @@
 - [x] Record the exact upstream Shipwright commit and immutable libultraship/Torch submodule gitlinks in [BASELINE.md](BASELINE.md). License/permission review remains open.
 - [x] Inspect application CMake, renderer selection and platform-specific source branches at the pinned source baseline.
 - [x] Review xsdk, Vulkan4Xenon, SDL-xenon and Dusklight-Xenon build/port documentation.
-- [ ] Build the smallest supported xsdk sample in a clean, reproducible environment.
+- [ ] Confirm the [xsdk smoke workflow](../.github/workflows/xsdk-smoke.yml) builds the official `hello` and `triangle` samples and inspect its logs/artifacts.
 - [ ] Record compiler versions and whether each test was compile-only, emulator-tested or verified on physical hardware.
 
-**Exit criteria:** a pinned baseline, documented toolchain setup, and a reproducible minimal .xex test. Do not begin broad source integration before this passes.
+**Exit criteria:** a pinned baseline, documented toolchain setup, and a reproducible minimal .xex compile verified by CI. Then run/verify on the intended console before depending on runtime behavior. Do not begin broad source integration before the compile gate passes.
 
 Current evidence and open issues are captured in [BASELINE.md](BASELINE.md), [DEPENDENCY_AUDIT.md](DEPENDENCY_AUDIT.md), [DEPENDENCY_MATRIX.md](DEPENDENCY_MATRIX.md) and [RENDERER_FEASIBILITY.md](RENDERER_FEASIBILITY.md).
 
